@@ -42,15 +42,15 @@ export function PlanForm({ onSubmit }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-lg space-y-6 rounded-2xl bg-white p-8 shadow-lg"
+      className="mx-auto max-w-lg space-y-6 rounded-2xl border border-stone-200 bg-white p-8 shadow-lg"
     >
-      <h2 className="text-center text-2xl font-bold text-gray-800">
+      <h2 className="text-center text-2xl font-bold text-stone-800">
         旅行プランを作成
       </h2>
 
       {/* 出発地 */}
       <div className="space-y-1">
-        <label htmlFor="departure" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="departure" className="block text-sm font-medium text-stone-600">
           出発地
         </label>
         <input
@@ -59,20 +59,20 @@ export function PlanForm({ onSubmit }: Props) {
           placeholder="例: 東京"
           value={values.departure}
           onChange={(e) => setValues({ ...values, departure: e.target.value })}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-full rounded-lg border border-stone-300 bg-stone-50 px-4 py-2 text-stone-800 placeholder:text-stone-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
         />
       </div>
 
       {/* 日程 */}
       <div className="space-y-1">
-        <label htmlFor="schedule" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="schedule" className="block text-sm font-medium text-stone-600">
           日程
         </label>
         <select
           id="schedule"
           value={values.schedule}
           onChange={(e) => setValues({ ...values, schedule: e.target.value })}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-full rounded-lg border border-stone-300 bg-stone-50 px-4 py-2 text-stone-800 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
         >
           {SCHEDULE_OPTIONS.map((opt) => (
             <option key={opt} value={opt}>{opt}</option>
@@ -82,14 +82,14 @@ export function PlanForm({ onSubmit }: Props) {
 
       {/* 予算 */}
       <div className="space-y-1">
-        <label htmlFor="budget" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="budget" className="block text-sm font-medium text-stone-600">
           予算
         </label>
         <select
           id="budget"
           value={values.budget}
           onChange={(e) => setValues({ ...values, budget: e.target.value })}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-full rounded-lg border border-stone-300 bg-stone-50 px-4 py-2 text-stone-800 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
         >
           {BUDGET_OPTIONS.map((opt) => (
             <option key={opt} value={opt}>{opt}</option>
@@ -99,7 +99,7 @@ export function PlanForm({ onSubmit }: Props) {
 
       {/* 旅スタイル */}
       <div className="space-y-2">
-        <span className="block text-sm font-medium text-gray-700">
+        <span className="block text-sm font-medium text-stone-600">
           旅スタイル（複数選択可）
         </span>
         <div className="flex flex-wrap gap-2">
@@ -112,8 +112,8 @@ export function PlanForm({ onSubmit }: Props) {
                 onClick={() => handleStyleToggle(style)}
                 className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                   selected
-                    ? 'border-blue-600 bg-white text-blue-600'
-                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                    ? 'border-amber-500 bg-amber-50 text-amber-700'
+                    : 'border-stone-300 bg-white text-stone-600 hover:bg-stone-50'
                 }`}
               >
                 {style}
@@ -126,7 +126,7 @@ export function PlanForm({ onSubmit }: Props) {
       {/* 送信ボタン */}
       <button
         type="submit"
-        className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 active:bg-blue-800"
+        className="w-full rounded-lg bg-amber-600 py-3 font-semibold text-white transition hover:bg-amber-700 active:bg-amber-800"
       >
         プランを提案してもらう
       </button>
