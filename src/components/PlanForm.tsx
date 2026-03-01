@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-type FormValues = {
+export type FormValues = {
   departure: string
   schedule: string
   budget: string
@@ -18,7 +18,11 @@ const initialValues: FormValues = {
   styles: [],
 }
 
-export function PlanForm() {
+type Props = {
+  onSubmit: (values: FormValues) => void
+}
+
+export function PlanForm({ onSubmit }: Props) {
   const [values, setValues] = useState<FormValues>(initialValues)
 
   const handleStyleToggle = (style: string) => {
@@ -32,7 +36,7 @@ export function PlanForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(values)
+    onSubmit(values)
   }
 
   return (

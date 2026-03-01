@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 
 # Local tool versions
 mise.toml
@@ -25,3 +26,4 @@ mise.toml
 *.njsproj
 *.sln
 *.sw?
+.vercel
