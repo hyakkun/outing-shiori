@@ -9,9 +9,11 @@ const CATEGORY_STYLES: Record<ScheduleItem['category'], { bg: string; text: stri
 
 type Props = {
   plan: TravelPlan
+  geocodedIndices?: Set<number>
+  onSpotClick?: (index: number) => void
 }
 
-export function PlanResult({ plan }: Props) {
+export function PlanResult({ plan, geocodedIndices, onSpotClick }: Props) {
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-amber-100 bg-amber-50 px-8 py-10 shadow-lg">
       {/* ヘッダー */}
@@ -34,6 +36,7 @@ export function PlanResult({ plan }: Props) {
 
         {plan.schedule.map((item, i) => {
           const style = CATEGORY_STYLES[item.category] ?? CATEGORY_STYLES['観光']
+          const hasMarker = geocodedIndices?.has(i) ?? false
           return (
             <div key={i} className="relative mb-6 last:mb-0">
               {/* ドット */}
@@ -41,7 +44,10 @@ export function PlanResult({ plan }: Props) {
                 className={`absolute -left-8 top-1 h-3 w-3 rounded-full ring-2 ring-amber-50 ${style.dot}`}
               />
 
-              <div className="rounded-xl bg-white/80 p-5 shadow-sm">
+              <div
+                className={`rounded-xl bg-white/80 p-5 shadow-sm ${hasMarker ? 'cursor-pointer transition hover:ring-2 hover:ring-amber-300' : ''}`}
+                onClick={hasMarker ? () => onSpotClick?.(i) : undefined}
+              >
                 <div className="mb-2 flex items-center gap-3">
                   <span className="text-lg font-bold text-gray-800">
                     {item.time}
@@ -51,6 +57,9 @@ export function PlanResult({ plan }: Props) {
                   >
                     {item.category}
                   </span>
+                  {hasMarker && (
+                    <span className="text-xs text-amber-500" title="地図で表示">📍</span>
+                  )}
                 </div>
                 <h3 className="mb-1 text-base font-semibold text-gray-800">
                   {item.spot}

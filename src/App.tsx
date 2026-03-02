@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { PlanForm } from './components/PlanForm'
 import { PlanResult } from './components/PlanResult'
+import { PlanMap } from './components/PlanMap'
 import type { FormValues } from './components/PlanForm'
 import { generatePlan } from './lib/generatePlan'
 import type { TravelPlan } from './lib/generatePlan'
@@ -9,10 +10,19 @@ function App() {
   const [plan, setPlan] = useState<TravelPlan | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedSpotIndex, setSelectedSpotIndex] = useState<number | null>(null)
+  const [geocodedIndices, setGeocodedIndices] = useState<Set<number>>(new Set())
+  const mapRef = useRef<HTMLDivElement>(null)
+
+  const handleGeocodedIndicesChange = useCallback((indices: Set<number>) => {
+    setGeocodedIndices(indices)
+  }, [])
 
   const handleSubmit = async (values: FormValues) => {
     setPlan(null)
     setError(null)
+    setSelectedSpotIndex(null)
+    setGeocodedIndices(new Set())
     setLoading(true)
     try {
       const result = await generatePlan(values)
@@ -43,8 +53,14 @@ function App() {
         )}
 
         {plan && (
-          <div className="mt-8">
-            <PlanResult plan={plan} />
+          <div className="mt-8 space-y-6">
+            <PlanResult plan={plan} geocodedIndices={geocodedIndices} onSpotClick={(index) => {
+              setSelectedSpotIndex(index)
+              mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }} />
+            <div ref={mapRef}>
+              <PlanMap plan={plan} selectedSpotIndex={selectedSpotIndex} onGeocodedIndicesChange={handleGeocodedIndicesChange} />
+            </div>
           </div>
         )}
       </div>
