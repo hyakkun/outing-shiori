@@ -26,7 +26,10 @@ export async function geocodeSpots(
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
-        { headers: { 'User-Agent': 'outing-shiori/1.0' } },
+        {
+          headers: { 'User-Agent': 'outing-shiori/1.0' },
+          signal: AbortSignal.timeout(5000),
+        },
       )
       const data = await res.json()
       if (data.length > 0) {
