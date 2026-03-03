@@ -47,9 +47,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-100 px-4 py-12">
+    <div className="min-h-screen bg-cream px-4 py-12">
       <div className="mx-auto max-w-lg">
-        <PlanForm onSubmit={handleSubmit} />
+        <h1 className="mb-8 text-center text-3xl font-bold text-stone-800">
+          🗺️ お出かけのしおり
+        </h1>
+        <PlanForm onSubmit={handleSubmit} loading={loading} />
 
         {loading && (
           <div className="mt-8 flex flex-col items-center gap-3 text-amber-700">
@@ -66,25 +69,24 @@ function App() {
 
         {plan && (
           <div className="mt-8 space-y-6">
-            <PlanResult plan={plan} geocodedIndices={geocodedIndices} onSpotClick={(index) => {
-              setSelectedSpotIndex(index)
-              mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            }} />
-            <div ref={mapRef}>
-              <PlanMap plan={plan} selectedSpotIndex={selectedSpotIndex} onGeocodedIndicesChange={handleGeocodedIndicesChange} />
-            </div>
-            <button
-              type="button"
-              onClick={async () => {
+            <PlanResult
+              plan={plan}
+              geocodedIndices={geocodedIndices}
+              onSpotClick={(index) => {
+                setSelectedSpotIndex(index)
+                mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              }}
+              onShare={async () => {
                 const url = window.location.origin + window.location.pathname + encodePlan(plan)
                 await navigator.clipboard.writeText(url)
                 setCopied(true)
                 setTimeout(() => setCopied(false), 2000)
               }}
-              className="w-full rounded-lg border border-amber-300 bg-white py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 active:bg-amber-100"
-            >
-              {copied ? 'コピーしました！' : 'このプランを共有'}
-            </button>
+              copied={copied}
+            />
+            <div ref={mapRef}>
+              <PlanMap plan={plan} selectedSpotIndex={selectedSpotIndex} onGeocodedIndicesChange={handleGeocodedIndicesChange} />
+            </div>
           </div>
         )}
       </div>

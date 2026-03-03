@@ -20,9 +20,10 @@ const initialValues: FormValues = {
 
 type Props = {
   onSubmit: (values: FormValues) => void
+  loading?: boolean
 }
 
-export function PlanForm({ onSubmit }: Props) {
+export function PlanForm({ onSubmit, loading }: Props) {
   const [values, setValues] = useState<FormValues>(initialValues)
 
   const handleStyleToggle = (style: string) => {
@@ -126,9 +127,13 @@ export function PlanForm({ onSubmit }: Props) {
       {/* 送信ボタン */}
       <button
         type="submit"
-        className="w-full rounded-lg bg-amber-600 py-3 font-semibold text-white transition hover:bg-amber-700 active:bg-amber-800"
+        disabled={loading}
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#d4744a] py-3 font-semibold text-white transition hover:bg-[#c0663f] active:bg-[#ab5a37] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        プランを提案してもらう
+        {loading && (
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+        )}
+        {loading ? 'プランを作成中...' : 'プランを提案してもらう'}
       </button>
     </form>
   )

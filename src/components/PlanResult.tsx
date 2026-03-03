@@ -11,9 +11,11 @@ type Props = {
   plan: TravelPlan
   geocodedIndices?: Set<number>
   onSpotClick?: (index: number) => void
+  onShare?: () => void
+  copied?: boolean
 }
 
-export function PlanResult({ plan, geocodedIndices, onSpotClick }: Props) {
+export function PlanResult({ plan, geocodedIndices, onSpotClick, onShare, copied }: Props) {
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-amber-100 bg-amber-50 px-8 py-10 shadow-lg">
       {/* ヘッダー */}
@@ -21,7 +23,7 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick }: Props) {
         <p className="mb-2 text-center text-sm font-medium tracking-widest text-amber-600">
           旅のしおり
         </p>
-        <h2 className="mb-3 text-center text-2xl font-bold text-gray-800">
+        <h2 className="mb-3 text-center text-3xl font-bold text-gray-800">
           {plan.destination}
         </h2>
         <p className="text-center text-sm leading-relaxed text-gray-600">
@@ -32,7 +34,7 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick }: Props) {
       {/* タイムライン */}
       <div className="relative pl-8">
         {/* 縦線 */}
-        <div className="absolute left-3.5 top-2 bottom-2 w-px bg-amber-200" />
+        <div className="absolute left-3.5 top-2 bottom-2 w-0.5 bg-amber-400" />
 
         {plan.schedule.map((item, i) => {
           const style = CATEGORY_STYLES[item.category] ?? CATEGORY_STYLES['観光']
@@ -45,7 +47,7 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick }: Props) {
               />
 
               <div
-                className={`rounded-xl bg-white/80 p-5 shadow-sm ${hasMarker ? 'cursor-pointer transition hover:ring-2 hover:ring-amber-300' : ''}`}
+                className={`rounded-xl bg-white/80 p-5 shadow-md ${hasMarker ? 'cursor-pointer transition hover:ring-2 hover:ring-amber-300' : ''}`}
                 onClick={hasMarker ? () => onSpotClick?.(i) : undefined}
               >
                 <div className="mb-2 flex items-center gap-3">
@@ -72,6 +74,19 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick }: Props) {
           )
         })}
       </div>
+
+      {/* 共有ボタン */}
+      {onShare && (
+        <div className="mt-8 border-t border-amber-200 pt-6">
+          <button
+            type="button"
+            onClick={onShare}
+            className="w-full rounded-lg border border-amber-300 bg-white py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 active:bg-amber-100"
+          >
+            {copied ? 'コピーしました！' : 'このプランを共有'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
