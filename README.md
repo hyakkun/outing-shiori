@@ -14,12 +14,16 @@ AIが旅行プランを提案し、タイムライン形式のしおりとして
 - Tailwind CSS v4
 - Claude API（Anthropic）
 - Leaflet.js / react-leaflet
+- Supabase（プラン保存・共有）
 - Vercel / Vercel Functions
 
 ## ローカル開発
 1. リポジトリをクローン
 2. 依存関係をインストール: `npm install`
-3. `.env.local` を作成し `ANTHROPIC_API_KEY` を設定（`.env.example` を参照）
+3. `.env` を作成し環境変数を設定（`.env.example` を参照）
+   - `ANTHROPIC_API_KEY`: Claude APIキー
+   - `SUPABASE_URL`: SupabaseプロジェクトURL
+   - `SUPABASE_ANON_KEY`: Supabase匿名キー
 4. `vercel dev` で起動（Vercel CLIが必要）
 
 ## 注意事項

@@ -9,15 +9,20 @@
 - Tailwind CSS v4（`@tailwindcss/vite` プラグイン方式、設定ファイル不要）
 - AI提案: Claude API（Vercel Serverless Function経由）
 - 地図: Leaflet + react-leaflet v5（Nominatim APIでジオコーディング）
-- 共有機能: Base64 URLエンコード
+- データ保存・共有: Supabase（plans テーブル）
+- ルーティング: react-router-dom
 - デプロイ: Vercel
 
 ## プロジェクト構成
 ```
 api/
   generate.ts          # Vercel Serverless Function（Claude API プロキシ）
+  save-plan.ts         # プラン保存 API（POST /api/save-plan）
+  get-plan.ts          # プラン取得 API（GET /api/get-plan?id=uuid）
+  supabase.ts          # Supabase クライアント初期化（サーバーサイド専用）
 src/
-  App.tsx              # メインコンポーネント（状態管理・レイアウト）
+  App.tsx              # ルーティング定義（/ と /plan/:id）・共通レイアウト
+  main.tsx             # エントリポイント（BrowserRouter）
   index.css            # グローバルスタイル（カスタム背景色定義）
   components/
     PlanForm.tsx       # 入力フォーム（出発地・日程・予算・人数・移動手段・旅スタイル）
@@ -26,7 +31,8 @@ src/
   lib/
     generatePlan.ts    # API呼び出し + TravelPlan型定義 + バリデーション
     geocode.ts         # Nominatimジオコーディング（日本国内フィルタ付き）
-    sharePlan.ts       # URL共有（Base64エンコード/デコード、後方互換対応）
+  pages/
+    SharedPlanPage.tsx # 保存済みプラン表示ページ（/plan/:id）
 ```
 
 ## 開発ルール
@@ -38,9 +44,19 @@ src/
 - `ScheduleItem`: スケジュール1項目（day, time, spot, address?, description, estimatedCost, category）
 - `TravelPlan`: プラン全体（destination, description, totalEstimatedCost, schedule）
 
-## API仕様（api/generate.ts）
-- POST `/api/generate`
+## API仕様
+### POST `/api/generate`（ai/generate.ts）
 - バリデーション: 出発地（必須・50文字以内）、日程・予算・人数・移動手段（定数リスト）、旅スタイル（最大5つ）
 - レートリミット: 1IPあたり10リクエスト/分（インメモリ）
 - レスポンス検証: `isValidPlan()` で構造チェック
 - 費用は1人あたり金額
+
+### POST `/api/save-plan`（api/save-plan.ts）
+- リクエスト: `{ planData, formValues }`
+- レスポンス: `{ id: uuid }`
+- バリデーション: planData.destination が文字列、planData.schedule が配列
+
+### GET `/api/get-plan`（api/get-plan.ts）
+- クエリ: `?id=uuid`
+- レスポンス: `{ planData, formValues }`
+- UUID形式チェック、404対応

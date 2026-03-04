@@ -15,13 +15,14 @@ function formatCost(cost: number): string {
 type Props = {
   plan: TravelPlan
   budget?: string
+  shareId?: string
   geocodedIndices?: Set<number>
   onSpotClick?: (index: number) => void
   onShare?: () => void
   copied?: boolean
 }
 
-export function PlanResult({ plan, budget, geocodedIndices, onSpotClick, onShare, copied }: Props) {
+export function PlanResult({ plan, budget, shareId, geocodedIndices, onSpotClick, onShare, copied }: Props) {
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-amber-100 bg-amber-50 px-8 py-10 shadow-lg">
       {/* ヘッダー */}
@@ -104,9 +105,10 @@ export function PlanResult({ plan, budget, geocodedIndices, onSpotClick, onShare
           <button
             type="button"
             onClick={onShare}
-            className="w-full rounded-lg border border-amber-300 bg-white py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 active:bg-amber-100"
+            disabled={!shareId}
+            className="w-full rounded-lg border border-amber-300 bg-white py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 active:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {copied ? 'コピーしました！' : 'このプランを共有'}
+            {copied ? 'コピーしました！' : shareId ? 'このプランを共有' : '保存中...'}
           </button>
         </div>
       )}
