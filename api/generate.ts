@@ -87,6 +87,7 @@ const SYSTEM_PROMPT = `あなたは旅行プランナーです。ユーザーの
 {
   "destination": "目的地名",
   "description": "旅行の概要（2〜3文）",
+  "totalEstimatedCost": 15000,
   "schedule": [
     {
       "day": 1,
@@ -94,6 +95,7 @@ const SYSTEM_PROMPT = `あなたは旅行プランナーです。ユーザーの
       "spot": "スポット名",
       "address": "市区町村・地区名のみ（例: 東山区、草津市）",
       "description": "説明",
+      "estimatedCost": 1000,
       "category": "食事 | 観光 | 移動 | 宿泊"
     }
   ]
@@ -102,7 +104,9 @@ const SYSTEM_PROMPT = `あなたは旅行プランナーです。ユーザーの
 dayは1始まりの整数で、何日目かを表します。日帰りの場合は常に1としてください。
 categoryは「食事」「観光」「移動」「宿泊」のいずれかを使用してください。
 addressは地図表示に使用するため、市区町村・地区名を含めてください。都道府県・市名は不要です。
-各スポットのdescriptionは1〜2文で簡潔に記述すること。`
+各スポットのdescriptionは1〜2文で簡潔に記述すること。
+estimatedCostは概算費用を円単位の整数で記載。無料の場合は0。移動は交通費の目安。
+totalEstimatedCostはscheduleのestimatedCostの合計（整数）。`
 
 const VALID_CATEGORIES = ['食事', '観光', '移動', '宿泊'] as const
 const MAX_SCHEDULE_ITEMS = 50
@@ -113,6 +117,7 @@ function isValidPlan(data: unknown): boolean {
   const obj = data as Record<string, unknown>
 
   if (typeof obj.destination !== 'string' || typeof obj.description !== 'string') return false
+  if (typeof obj.totalEstimatedCost !== 'number' || !Number.isInteger(obj.totalEstimatedCost) || obj.totalEstimatedCost < 0) return false
   if (!Array.isArray(obj.schedule) || obj.schedule.length > MAX_SCHEDULE_ITEMS) return false
 
   for (const item of obj.schedule) {
@@ -121,6 +126,7 @@ function isValidPlan(data: unknown): boolean {
     if (typeof s.day !== 'number' || !Number.isInteger(s.day) || s.day < 1) return false
     if (typeof s.time !== 'string' || typeof s.spot !== 'string' || typeof s.description !== 'string') return false
     if (s.address !== undefined && typeof s.address !== 'string') return false
+    if (typeof s.estimatedCost !== 'number' || !Number.isInteger(s.estimatedCost) || s.estimatedCost < 0) return false
     if (typeof s.category !== 'string' || !(VALID_CATEGORIES as readonly string[]).includes(s.category)) return false
   }
   return true

@@ -7,15 +7,21 @@ const CATEGORY_STYLES: Record<ScheduleItem['category'], { bg: string; text: stri
   宿泊: { bg: 'bg-purple-100', text: 'text-purple-700' },
 }
 
+function formatCost(cost: number): string {
+  if (cost === 0) return '無料'
+  return `約${cost.toLocaleString()}円`
+}
+
 type Props = {
   plan: TravelPlan
+  budget?: string
   geocodedIndices?: Set<number>
   onSpotClick?: (index: number) => void
   onShare?: () => void
   copied?: boolean
 }
 
-export function PlanResult({ plan, geocodedIndices, onSpotClick, onShare, copied }: Props) {
+export function PlanResult({ plan, budget, geocodedIndices, onSpotClick, onShare, copied }: Props) {
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-amber-100 bg-amber-50 px-8 py-10 shadow-lg">
       {/* ヘッダー */}
@@ -28,6 +34,10 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick, onShare, copied
         </h2>
         <p className="text-center text-sm leading-relaxed text-gray-600">
           {plan.description}
+        </p>
+        <p className="mt-3 text-center text-xs text-amber-600">
+          概算費用: {formatCost(plan.totalEstimatedCost)}
+          {budget && <span className="text-gray-400"> / 予算: {budget}</span>}
         </p>
       </div>
 
@@ -71,6 +81,9 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick, onShare, copied
                 </h3>
                 <p className="text-sm leading-relaxed text-gray-600">
                   {item.description}
+                </p>
+                <p className="mt-2 text-right text-xs text-amber-600">
+                  {formatCost(item.estimatedCost)}
                 </p>
               </div>
             </div>

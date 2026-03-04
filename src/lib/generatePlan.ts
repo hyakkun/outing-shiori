@@ -6,12 +6,14 @@ export type ScheduleItem = {
   spot: string
   address?: string
   description: string
+  estimatedCost: number
   category: '食事' | '観光' | '移動' | '宿泊'
 }
 
 export type TravelPlan = {
   destination: string
   description: string
+  totalEstimatedCost: number
   schedule: ScheduleItem[]
 }
 
@@ -23,6 +25,7 @@ export function isTravelPlan(data: unknown): data is TravelPlan {
   const obj = data as Record<string, unknown>
 
   if (typeof obj.destination !== 'string' || typeof obj.description !== 'string') return false
+  if (typeof obj.totalEstimatedCost !== 'number' || !Number.isInteger(obj.totalEstimatedCost) || obj.totalEstimatedCost < 0) return false
   if (!Array.isArray(obj.schedule) || obj.schedule.length > MAX_SCHEDULE_ITEMS) return false
 
   for (const item of obj.schedule) {
@@ -33,6 +36,7 @@ export function isTravelPlan(data: unknown): data is TravelPlan {
     if (typeof s.spot !== 'string') return false
     if (s.address !== undefined && typeof s.address !== 'string') return false
     if (typeof s.description !== 'string') return false
+    if (typeof s.estimatedCost !== 'number' || !Number.isInteger(s.estimatedCost) || s.estimatedCost < 0) return false
     if (typeof s.category !== 'string' || !VALID_CATEGORIES.includes(s.category as ScheduleItem['category'])) return false
   }
 

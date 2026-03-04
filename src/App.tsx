@@ -14,6 +14,7 @@ function App() {
   const [selectedSpotIndex, setSelectedSpotIndex] = useState<number | null>(null)
   const [geocodedIndices, setGeocodedIndices] = useState<Set<number>>(new Set())
   const [copied, setCopied] = useState(false)
+  const [budget, setBudget] = useState<string>('')
   const mapRef = useRef<HTMLDivElement>(null)
 
   // URL に ?plan= があれば自動復元
@@ -36,6 +37,7 @@ function App() {
     setSelectedSpotIndex(null)
     setGeocodedIndices(new Set())
     setLoading(true)
+    setBudget(values.budget)
     try {
       const result = await generatePlan(values)
       setPlan(result)
@@ -71,6 +73,7 @@ function App() {
           <div className="mt-8 space-y-6">
             <PlanResult
               plan={plan}
+              budget={budget}
               geocodedIndices={geocodedIndices}
               onSpotClick={(index) => {
                 setSelectedSpotIndex(index)
