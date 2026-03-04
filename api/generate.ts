@@ -7,6 +7,8 @@ const MAX_TOKENS = Number(process.env.ANTHROPIC_MAX_TOKENS ?? 2048)
 // --- バリデーション定数 ---
 const VALID_SCHEDULES = ['日帰り', '1泊2日', '2泊3日'] as const
 const VALID_BUDGETS = ['〜1万円', '1〜3万円', '3〜5万円', '5万円〜'] as const
+const VALID_GROUP_SIZES = ['1人', '2人', '3〜4人', '5人以上'] as const
+const VALID_TRANSPORTS = ['公共交通機関', '車あり'] as const
 const VALID_STYLES = ['自然', 'グルメ', '観光地', '温泉', '穴場・ローカル'] as const
 const MAX_DEPARTURE_LENGTH = 50
 const MAX_STYLES_COUNT = 5
@@ -40,13 +42,13 @@ function getClientIp(req: VercelRequest): string {
 // --- バリデーション ---
 function validateInput(body: unknown): {
   valid: true
-  data: { departure: string; schedule: string; budget: string; styles: string[] }
+  data: { departure: string; schedule: string; budget: string; groupSize: string; transport: string; styles: string[] }
 } | { valid: false; error: string } {
   if (!body || typeof body !== 'object') {
     return { valid: false, error: 'リクエストボディが不正です' }
   }
 
-  const { departure, schedule, budget, styles } = body as Record<string, unknown>
+  const { departure, schedule, budget, groupSize, transport, styles } = body as Record<string, unknown>
 
   if (typeof departure !== 'string' || departure.trim().length === 0) {
     return { valid: false, error: '出発地は必須です' }
@@ -66,6 +68,14 @@ function validateInput(body: unknown): {
     return { valid: false, error: '予算の値が不正です' }
   }
 
+  if (typeof groupSize !== 'string' || !(VALID_GROUP_SIZES as readonly string[]).includes(groupSize)) {
+    return { valid: false, error: '人数の値が不正です' }
+  }
+
+  if (typeof transport !== 'string' || !(VALID_TRANSPORTS as readonly string[]).includes(transport)) {
+    return { valid: false, error: '移動手段の値が不正です' }
+  }
+
   if (!Array.isArray(styles) || styles.length > MAX_STYLES_COUNT) {
     return { valid: false, error: '旅スタイルの値が不正です' }
   }
@@ -75,7 +85,7 @@ function validateInput(body: unknown): {
     }
   }
 
-  return { valid: true, data: { departure: departure.trim(), schedule, budget, styles } }
+  return { valid: true, data: { departure: departure.trim(), schedule, budget, groupSize, transport, styles } }
 }
 
 // --- システムプロンプト ---
@@ -106,7 +116,8 @@ categoryは「食事」「観光」「移動」「宿泊」のいずれかを使
 addressは地図表示に使用するため、市区町村・地区名を含めてください。都道府県・市名は不要です。
 各スポットのdescriptionは1〜2文で簡潔に記述すること。
 estimatedCostは概算費用を円単位の整数で記載。無料の場合は0。移動は交通費の目安。
-totalEstimatedCostはscheduleのestimatedCostの合計（整数）。`
+estimatedCostとtotalEstimatedCostは1人あたりの金額（整数）。totalEstimatedCostはscheduleのestimatedCostの合計。
+移動手段が「車あり」の場合はドライブルートや駐車場のあるスポットを優先し、移動カテゴリでは所要時間と距離の目安を含めてください。`
 
 const VALID_CATEGORIES = ['食事', '観光', '移動', '宿泊'] as const
 const MAX_SCHEDULE_ITEMS = 50
@@ -159,12 +170,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!validation.valid) {
     return res.status(400).json({ error: validation.error })
   }
-  const { departure, schedule, budget, styles } = validation.data
+  const { departure, schedule, budget, groupSize, transport, styles } = validation.data
 
   const userMessage = `条件:
 - 出発地: ${departure}
 - 日程: ${schedule}
-- 予算: ${budget}
+- 予算（1人あたり）: ${budget}
+- 人数: ${groupSize}
+- 移動手段: ${transport}
 - 旅スタイル: ${styles.length > 0 ? styles.join('、') : '指定なし'}`
 
   try {

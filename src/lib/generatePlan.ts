@@ -51,6 +51,8 @@ export async function generatePlan(values: FormValues): Promise<TravelPlan> {
       departure: values.departure,
       schedule: values.schedule,
       budget: values.budget,
+      groupSize: values.groupSize,
+      transport: values.transport,
       styles: values.styles,
     }),
   })

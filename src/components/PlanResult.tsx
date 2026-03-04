@@ -36,8 +36,8 @@ export function PlanResult({ plan, budget, geocodedIndices, onSpotClick, onShare
           {plan.description}
         </p>
         <p className="mt-3 text-center text-xs text-amber-600">
-          概算費用: {formatCost(plan.totalEstimatedCost)}
-          {budget && <span className="text-gray-400"> / 予算: {budget}</span>}
+          概算費用: {formatCost(plan.totalEstimatedCost)}/人
+          {budget && <span className="text-gray-400"> （予算: {budget}）</span>}
         </p>
       </div>
 
