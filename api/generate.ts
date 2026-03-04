@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Anthropic from '@anthropic-ai/sdk'
 
 const MODEL = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514'
-const MAX_TOKENS = Number(process.env.ANTHROPIC_MAX_TOKENS ?? 1024)
+const MAX_TOKENS = Number(process.env.ANTHROPIC_MAX_TOKENS ?? 2048)
 
 // --- バリデーション定数 ---
 const VALID_SCHEDULES = ['日帰り', '1泊2日', '2泊3日'] as const
@@ -89,15 +89,20 @@ const SYSTEM_PROMPT = `あなたは旅行プランナーです。ユーザーの
   "description": "旅行の概要（2〜3文）",
   "schedule": [
     {
+      "day": 1,
       "time": "09:00",
       "spot": "スポット名",
+      "address": "市区町村・地区名のみ（例: 東山区、草津市）",
       "description": "説明",
       "category": "食事 | 観光 | 移動 | 宿泊"
     }
   ]
 }
 
-categoryは「食事」「観光」「移動」「宿泊」のいずれかを使用してください。`
+dayは1始まりの整数で、何日目かを表します。日帰りの場合は常に1としてください。
+categoryは「食事」「観光」「移動」「宿泊」のいずれかを使用してください。
+addressは地図表示に使用するため、市区町村・地区名を含めてください。都道府県・市名は不要です。
+各スポットのdescriptionは1〜2文で簡潔に記述すること。`
 
 const VALID_CATEGORIES = ['食事', '観光', '移動', '宿泊'] as const
 const MAX_SCHEDULE_ITEMS = 50
@@ -113,7 +118,9 @@ function isValidPlan(data: unknown): boolean {
   for (const item of obj.schedule) {
     if (!item || typeof item !== 'object') return false
     const s = item as Record<string, unknown>
+    if (typeof s.day !== 'number' || !Number.isInteger(s.day) || s.day < 1) return false
     if (typeof s.time !== 'string' || typeof s.spot !== 'string' || typeof s.description !== 'string') return false
+    if (s.address !== undefined && typeof s.address !== 'string') return false
     if (typeof s.category !== 'string' || !(VALID_CATEGORIES as readonly string[]).includes(s.category)) return false
   }
   return true
@@ -162,6 +169,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userMessage }],
     })
+
+    console.log(`[Claude API] input_tokens=${message.usage.input_tokens} output_tokens=${message.usage.output_tokens} stop_reason=${message.stop_reason}`)
 
     const textBlock = message.content.find((block) => block.type === 'text')
     if (!textBlock || textBlock.type !== 'text') {

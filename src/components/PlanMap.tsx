@@ -61,7 +61,7 @@ function OpenSelectedPopup({
 }: {
   geocoded: GeocodedSpot[]
   selectedSpotIndex: number | null
-  markerRefs: React.MutableRefObject<Map<number, L.Marker>>
+  markerRefs: React.RefObject<Map<number, L.Marker>>
 }) {
   const map = useMap()
   useEffect(() => {
@@ -100,7 +100,7 @@ export function PlanMap({ plan, selectedSpotIndex, onGeocodedIndicesChange }: Pr
   useEffect(() => {
     let cancelled = false
 
-    const spots = targetItems.map(({ item }) => item.spot)
+    const spots = targetItems.map(({ item }) => ({ name: item.spot, address: item.address }))
     geocodeSpots(spots, plan.destination).then((results) => {
       if (!cancelled) {
         const remapped = results.map((r) => ({
@@ -164,7 +164,7 @@ export function PlanMap({ plan, selectedSpotIndex, onGeocodedIndicesChange }: Pr
               <Popup>
                 <div className="text-sm">
                   <p className="font-bold">
-                    {item.time} {item.spot}
+                    {item.day}日目 {item.time} {item.spot}
                   </p>
                   <p className="mt-1 text-gray-600">{item.description}</p>
                 </div>

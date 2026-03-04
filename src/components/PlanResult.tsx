@@ -1,10 +1,10 @@
 import type { TravelPlan, ScheduleItem } from '../lib/generatePlan'
 
-const CATEGORY_STYLES: Record<ScheduleItem['category'], { bg: string; text: string; dot: string }> = {
-  食事: { bg: 'bg-orange-100', text: 'text-orange-700', dot: 'bg-orange-400' },
-  観光: { bg: 'bg-blue-100', text: 'text-blue-700', dot: 'bg-blue-400' },
-  移動: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400' },
-  宿泊: { bg: 'bg-purple-100', text: 'text-purple-700', dot: 'bg-purple-400' },
+const CATEGORY_STYLES: Record<ScheduleItem['category'], { bg: string; text: string }> = {
+  食事: { bg: 'bg-orange-100', text: 'text-orange-700' },
+  観光: { bg: 'bg-blue-100', text: 'text-blue-700' },
+  移動: { bg: 'bg-gray-100', text: 'text-gray-600' },
+  宿泊: { bg: 'bg-purple-100', text: 'text-purple-700' },
 }
 
 type Props = {
@@ -32,19 +32,22 @@ export function PlanResult({ plan, geocodedIndices, onSpotClick, onShare, copied
       </div>
 
       {/* タイムライン */}
-      <div className="relative pl-8">
-        {/* 縦線 */}
-        <div className="absolute left-3.5 top-2 bottom-2 w-0.5 bg-amber-400" />
-
+      <div>
         {plan.schedule.map((item, i) => {
           const style = CATEGORY_STYLES[item.category] ?? CATEGORY_STYLES['観光']
           const hasMarker = geocodedIndices?.has(i) ?? false
+          const showDayLabel = i === 0 || item.day !== plan.schedule[i - 1].day
           return (
-            <div key={i} className="relative mb-6 last:mb-0">
-              {/* ドット */}
-              <div
-                className={`absolute -left-8 top-1 h-3 w-3 rounded-full ring-2 ring-amber-50 ${style.dot}`}
-              />
+            <div key={i} className="mb-6 last:mb-0">
+              {showDayLabel && (
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="h-px flex-1 border-t border-dashed border-amber-300" />
+                  <span className="text-xs font-semibold tracking-wide text-amber-500">
+                    {item.day}日目
+                  </span>
+                  <div className="h-px flex-1 border-t border-dashed border-amber-300" />
+                </div>
+              )}
 
               <div
                 className={`rounded-xl bg-white/80 p-5 shadow-md ${hasMarker ? 'cursor-pointer transition hover:ring-2 hover:ring-amber-300' : ''}`}

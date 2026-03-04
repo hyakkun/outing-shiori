@@ -21,6 +21,16 @@ export function decodePlan(query: string): TravelPlan | null {
     if (!base64) return null
     const json = decodeURIComponent(atob(base64))
     const data: unknown = JSON.parse(json)
+
+    // 後方互換: day フィールドがない旧データにフォールバック
+    if (data && typeof data === 'object' && Array.isArray((data as Record<string, unknown>).schedule)) {
+      for (const item of (data as Record<string, unknown>).schedule as Record<string, unknown>[]) {
+        if (item && typeof item === 'object' && typeof item.day !== 'number') {
+          item.day = 1
+        }
+      }
+    }
+
     if (!isTravelPlan(data)) return null
     return data
   } catch {

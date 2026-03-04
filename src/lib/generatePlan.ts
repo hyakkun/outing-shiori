@@ -1,8 +1,10 @@
 import type { FormValues } from '../components/PlanForm'
 
 export type ScheduleItem = {
+  day: number
   time: string
   spot: string
+  address?: string
   description: string
   category: '食事' | '観光' | '移動' | '宿泊'
 }
@@ -26,8 +28,10 @@ export function isTravelPlan(data: unknown): data is TravelPlan {
   for (const item of obj.schedule) {
     if (!item || typeof item !== 'object') return false
     const s = item as Record<string, unknown>
+    if (typeof s.day !== 'number' || !Number.isInteger(s.day) || s.day < 1) return false
     if (typeof s.time !== 'string') return false
     if (typeof s.spot !== 'string') return false
+    if (s.address !== undefined && typeof s.address !== 'string') return false
     if (typeof s.description !== 'string') return false
     if (typeof s.category !== 'string' || !VALID_CATEGORIES.includes(s.category as ScheduleItem['category'])) return false
   }
