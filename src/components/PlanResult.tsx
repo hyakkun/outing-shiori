@@ -91,6 +91,13 @@ export function PlanResult({ plan, budget, geocodedIndices, onSpotClick, onShare
         })}
       </div>
 
+      {/* 免責メッセージ */}
+      <div className="mt-6 border-t border-dashed border-amber-200 pt-4">
+        <p className="text-center text-xs leading-relaxed text-stone-400">
+          ※ このプランはAIが生成したものです。営業時間・料金・アクセスなどは実際と異なる場合があります。訪問前に各スポットの公式情報をご確認ください。
+        </p>
+      </div>
+
       {/* 共有ボタン */}
       {onShare && (
         <div className="mt-8 border-t border-amber-200 pt-6">

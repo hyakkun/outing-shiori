@@ -1,73 +1,28 @@
-# React + TypeScript + Vite
+# outing-shiori 🗺️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AIが旅行プランを提案し、タイムライン形式のしおりとして表示・共有できるWebアプリです。
 
-Currently, two official plugins are available:
+## 機能
+- 出発地・日程・予算・人数・移動手段・旅スタイルを入力するとAIが旅行プランを提案
+- タイムライン形式のしおりUI（日別区切り・カテゴリ別カラー）
+- スポットの地図表示（OpenStreetMap + Nominatim）
+- 概算費用の表示
+- URLによるプラン共有
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 技術スタック
+- React 19 + TypeScript + Vite 7
+- Tailwind CSS v4
+- Claude API（Anthropic）
+- Leaflet.js / react-leaflet
+- Vercel / Vercel Functions
 
-## React Compiler
+## ローカル開発
+1. リポジトリをクローン
+2. 依存関係をインストール: `npm install`
+3. `.env.local` を作成し `ANTHROPIC_API_KEY` を設定（`.env.example` を参照）
+4. `vercel dev` で起動（Vercel CLIが必要）
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 注意事項
+- 本アプリはAIが生成した旅行プランを提示するものです
+- 掲載情報の正確性は保証されません。実際の訪問前に公式情報をご確認ください
+- 本サービスは個人の技術学習を目的として作成されています
