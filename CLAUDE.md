@@ -17,9 +17,8 @@
 ```
 api/
   generate.ts          # Vercel Serverless Function（Claude API プロキシ）
-  save-plan.ts         # プラン保存 API（POST /api/save-plan）
-  get-plan.ts          # プラン取得 API（GET /api/get-plan?id=uuid）
-  supabase.ts          # Supabase クライアント初期化（サーバーサイド専用）
+  save-plan.ts         # プラン保存 API（POST /api/save-plan、Supabaseクライアント内蔵）
+  get-plan.ts          # プラン取得 API（GET /api/get-plan?id=uuid、Supabaseクライアント内蔵）
 src/
   App.tsx              # ルーティング定義（/ と /plan/:id）・共通レイアウト
   main.tsx             # エントリポイント（BrowserRouter）
